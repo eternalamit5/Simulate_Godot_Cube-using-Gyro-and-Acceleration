@@ -12,7 +12,7 @@ using namespace std;
 ifstream openDataFile(){
 	/*This is a function to open the file*/
 	ifstream ip;
-	ip.open(GYRO_DATA_PATH);
+	ip.open(ACC_DATA_PATH);
 
 	if(ip.is_open()) std::cout << "File Opened Successfully" << '\n';
 	else{ cout << "Error opening File"; exit(1);}

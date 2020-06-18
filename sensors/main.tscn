@@ -39,6 +39,7 @@ size = Vector3( 4, 1.5, 4 )
 [sub_resource type="BoxShape" id=8]
 
 [sub_resource type="CubeMesh" id=9]
+size = Vector3( 2, 1, 2 )
 
 [node name="Main" type="Node"]
 script = ExtResource( 1 )

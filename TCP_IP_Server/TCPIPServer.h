@@ -28,6 +28,8 @@
 #define FALSE 0
 #define PORT 8888
 # define GYRO_DATA_PATH "../../gyrodata.txt"
+# define ACC_DATA_PATH "../../acc1.txt"
+
 
 
 #endif /* TCPIPSERVER_H_ */

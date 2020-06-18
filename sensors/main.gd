@@ -1,5 +1,5 @@
 extends Node
-
+#Amit
 # Below are a number of helper functions that show how you can use the raw sensor data to determine the orientation 
 # of your phone/device. The cheapest phones only have an accelerometer only the most expensive phones have all three.
 # Note that none of this logic filters data. Filters introduce lag but also provide stability. There are plenty
@@ -65,14 +65,15 @@ func orientate_by_mag_and_grav(p_mag, p_grav):
 	# This function takes our gyro input and update an orientation matrix accordingly
 # The gyro is special as this vector does not contain a direction but rather a
 # rotational velocity. This is why we multiply our values with delta.
+#
 func rotate_by_gyro(p_gyro, p_basis, p_delta):
 	var rotate = Basis()
 	
-	rotate = rotate.rotated(p_basis.x, -p_gyro.x * p_delta)
+	rotate = rotate.rotated(p_basis.x, -p_gyro.x * p_delta)  #it calculates angle from rot velocity, -ve is used for anti CW rotation : check
 	rotate = rotate.rotated(p_basis.y, -p_gyro.y * p_delta)
 	rotate = rotate.rotated(p_basis.z, -p_gyro.z * p_delta)
 	
-	return rotate * p_basis
+	return rotate * p_basis  # p_basis contains the previous rotation angle of the body in the matrix of 3x3
 
 # This function corrects the drift in our matrix by our gravity vector 
 func drift_correction(p_basis, p_grav):
@@ -101,7 +102,7 @@ var TempByteArray = null
 var recvMsg = null
 
 func _ready():
-	print("Start client TCP")
+	print("Started client TCP")
 	# Connect
 	connection = StreamPeerTCP.new()
 	if(connection.connect_to_host("127.0.0.1", 8888) !=OK):
@@ -110,7 +111,7 @@ func _ready():
 		peerstream.set_stream_peer(connection)
 
 func send_server():
-	AsciiString = "Requesting Data".to_ascii()
+	AsciiString = "{Client}: Requesting Data".to_ascii()
 	TempByteArray = PoolByteArray(AsciiString)
 	connection.put_data(TempByteArray) # sending poolbyte array to server
 
@@ -127,8 +128,11 @@ var acc_z = 0
 
 func poll_server():
 	recvMsg = connection.get_available_bytes()
+#	print("recvMsg")
 #	print(recvMsg)
 	var msg = connection.get_utf8_string(recvMsg)
+#	print("msg")
+#	print(msg)
 	#get_utf8_string(1)
 	if(msg.empty()==false):
 #		recvMsgArray.append(msg)
@@ -136,7 +140,8 @@ func poll_server():
 #		recvMsgStringLine = String(recvMsgString).split(",",true)
 		var temp = msg
 		var temp2 = Array(String(temp).split(":",true,0))
-#		print(temp2)
+		print("temp2")
+		print(temp2)
 		if temp2.size() == 6:
 			gyro_x = temp2[0]
 			gyro_y = temp2[1] 
@@ -144,7 +149,7 @@ func poll_server():
 			acc_x = temp2[3]
 			acc_y = temp2[4]
 			acc_z = temp2[5]
-#			acc_x = 10
+#			acc_x = 2
 #			acc_y = 0
 #			acc_z = 0
 #			recvMsgArray.clear()
@@ -215,5 +220,10 @@ func _process(delta):
 	var gyro_and_grav = get_node("Boxes/GyroAndGrav")
 	var new_basis = rotate_by_gyro(gyro, gyro_and_grav.transform.basis, delta).orthonormalized()
 	gyro_and_grav.transform.basis = drift_correction(new_basis, grav)
+	#get_node("Boxes/AccBox").moveBox(Linear_acc, delta)
+	var gyro_acc=get_node("Boxes/AccBox")
+	var new_basis1 = rotate_by_gyro(gyro, gyro_acc.transform.basis, delta).orthonormalized()
+	gyro_acc.transform.basis = drift_correction(new_basis, grav)
 	
+	#get_node("Boxes/GyroAndGrav").moveBox(Linear_acc, delta)
 	
