@@ -1,1 +1,1 @@
-# Simulate_Gyro_Acceleration_Godot_Cube
+# Simulate Godot_Cube using Gyro and Acceleration
